@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    file_list = os.listdir(r'C:\\Users\\ezequ\\proyectos\\openclassrooms\\Projet_8\\data\\data_final_2\\flask\\static\\images\\')
+    file_list = os.listdir('./static/images')
     return render_template('index.html', file_list=file_list)
 
 
@@ -30,8 +30,8 @@ def index():
 def predict():
     # Return selected file
     file = request.form['file']
-    image_path = str(r'C:\\Users\\ezequ\\proyectos\\openclassrooms\\Projet_8\\data\\data_final_2\\flask\\static\\images\\' + file)
-    mask_path = str(r'C:\\Users\\ezequ\\proyectos\\openclassrooms\\Projet_8\\data\\data_final_2\\flask\\static\\masks\\' + file)
+    image_path = str('./static/images/' + file)
+    mask_path = str('./static/masks/' + file)
 
     # Shared custom object of model
     def dice_loss(y_true, y_pred):
@@ -48,7 +48,7 @@ def predict():
         ttl_loss = tf.keras.losses.categorical_crossentropy(y_true, y_pred) + (3 * dice_loss(y_true, y_pred))
         return ttl_loss
 
-    model = tf.keras.models.load_model(r'C:\\Users\\ezequ\\proyectos\\openclassrooms\\Projet_8\\data\\data_final_2\\flask\\model\\mobilenet_segnet.h5', custom_objects={'total_loss': total_loss,'accuracy': 'accuracy'})
+    model = tf.keras.models.load_model('model/mobilenet_segnet.h5', custom_objects={'total_loss': total_loss,'accuracy': 'accuracy'})
     
     # Load and process mask
     mask = img_to_array(load_img(mask_path, target_size=(img_height, img_width), color_mode="grayscale"))
@@ -57,11 +57,11 @@ def predict():
 
     # Predict from image
     seg_img = infer(
-        model=model, inp=image_path, out_fname= 'C:\\Users\\ezequ\\proyectos\\openclassrooms\\Projet_8\\data\\data_final_2\\flask\\static\\outputs\\prediction.png',
+        model=model, inp=image_path, out_fname= './static/outputs/prediction.png',
         n_classes=n_classes, colors=class_colors,
         prediction_width=512, prediction_height=256,
         read_image_type=1)
-    plt.imsave('C:\\Users\\ezequ\\proyectos\\openclassrooms\\Projet_8\\data\\data_final_2\\flask\\static\\outputs\\prediction.png', seg_img, cmap='nipy_spectral_r')
+    plt.imsave('./static/outputs/prediction.png', seg_img, cmap='nipy_spectral_r')
     
     return render_template('predict.html', image_data=file)
 
