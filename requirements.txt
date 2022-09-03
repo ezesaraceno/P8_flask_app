@@ -3,7 +3,6 @@ matplotlib==3.5.2
 imageio==2.19.3
 aiogrpc==1.8
 flask==2.2.2
-OpenCV==4.6.0
 gunicorn==19.9.0
 numpy>=1.23.2
 scikit-learn>=0.18
